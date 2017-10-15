@@ -18,3 +18,9 @@ cabal.sandbox.config
 .stack-work/
 cabal.project.local
 .HTF/
+
+# elm-package generated files
+elm-stuff
+static/main.js
+# elm-repl generated files
+repl-temp-*
