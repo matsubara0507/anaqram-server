@@ -1,0 +1,36 @@
+name:                anaqram-server
+version:             0.1.0.0
+homepage:            https://github.com/matsubara0507/anaqram-server#readme
+license:             MIT
+author:              MATSUBARA Nobutada
+copyright:           2017 MATSUBARA Nobutada
+category:            Web
+extra-source-files:
+  - README.md
+
+ghc-options: -Wall
+
+dependencies:
+  - aeson
+  - base >= 4.7 && < 5
+  - containers
+  - servant
+  - servant-server
+  - text
+  - transformers
+  - unordered-containers
+
+library:
+  source-dirs: src
+  exposed-modules:
+    - Lib
+  other-modules: []
+  ghc-options: -fno-warn-orphans
+
+executables:
+  server:
+    source-dirs:      app
+    main:             Main.hs
+    dependencies:
+      - anaqram-server
+    other-modules: []
