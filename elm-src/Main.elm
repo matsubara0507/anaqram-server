@@ -63,11 +63,11 @@ viewScores model =
             table
                 [ class "col-12 f3" ]
                 [ thead []
-                    [ tr []
-                        [ th [ class "text-right" ] [ text "Rank" ]
-                        , th [ class "text-right" ] [ text "Text Length" ]
-                        , th [ class "text-right" ] [ text "Clear Time" ]
-                        , th [ class "text-right" ] [ text "Swap Count" ]
+                    [ tr [ class "border-bottum" ]
+                        [ th [ class "text-right p-2" ] [ text "Rank" ]
+                        , th [ class "text-right p-2" ] [ text "Text Length" ]
+                        , th [ class "text-right p-2" ] [ text "Clear Time" ]
+                        , th [ class "text-right p-2" ] [ text "Swap Count" ]
                         ]
                     ]
                 , scores
@@ -82,11 +82,11 @@ viewScores model =
 
 viewScore : Int -> API.Score -> Html Msg
 viewScore index score =
-    tr []
-        [ td [ class "text-right" ] [ text $ toString (index + 1) ]
-        , td [ class "text-right" ] [ text $ toString score.textLength ]
-        , td [ class "text-right" ] [ text $ toString score.clearTime ]
-        , td [ class "text-right" ] [ text $ toString score.swapCount ]
+    tr [ class "border-top", class $ if index % 2 == 0 then "bg-gray-light" else "" ]
+        [ td [ class "text-right p-2" ] [ text $ toString (index + 1) ]
+        , td [ class "text-right p-2" ] [ text $ toString score.textLength ]
+        , td [ class "text-right p-2" ] [ text $ toString score.clearTime ]
+        , td [ class "text-right p-2" ] [ text $ toString score.swapCount ]
         ]
 
 
