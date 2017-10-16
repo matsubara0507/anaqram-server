@@ -23,7 +23,14 @@ main =
 type alias Model =
     { scores : RemoteData String (List API.Score)
     , reload : Bool
+    , scoreOrds : List ScoreOrd
     }
+
+
+type ScoreOrd
+    = TextLength
+    | ClearTime
+    | SwapCount
 
 
 type Msg
@@ -37,6 +44,7 @@ model : Model
 model =
     { scores = NotAsked
     , reload = False
+    , scoreOrds = [TextLength, ClearTime, SwapCount]
     }
 
 
@@ -100,27 +108,26 @@ viewScores model =
                         ]
                     ]
                 , scores
-                    |> List.sortWith compareScore
+                    |> List.sortWith (compareScore model.scoreOrds)
                     |> List.indexedMap viewScore
                     |> tbody []
                 ]
 
 
-compareScore : Score -> Score -> Order
-compareScore a b =
-    compare b.textLength a.textLength
-        |> (\x ->
-                if x /= EQ then
-                    x
-                else
-                    compare a.clearTime b.clearTime
-                        |> (\x ->
-                                if x /= EQ then
-                                    x
-                                else
-                                    compare b.swapCount a.swapCount
-                           )
-           )
+compareScore : List ScoreOrd -> Score -> Score -> Order
+compareScore ords a b =
+    List.foldl (\ord acc -> if acc /= EQ then acc else compareScoreWith ord a b) EQ ords
+
+
+compareScoreWith : ScoreOrd -> Score -> Score -> Order
+compareScoreWith ord a b =
+    case ord of
+        TextLength ->
+            compare b.textLength a.textLength
+        ClearTime ->
+            compare a.clearTime b.clearTime
+        SwapCount ->
+            compare b.swapCount a.swapCount
 
 
 viewScore : Int -> API.Score -> Html Msg
