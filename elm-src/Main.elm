@@ -127,7 +127,7 @@ compareScoreWith ord a b =
         ClearTime ->
             compare a.clearTime b.clearTime
         SwapCount ->
-            compare b.swapCount a.swapCount
+            compare a.swapCount b.swapCount
 
 
 viewScore : Int -> API.Score -> Html Msg
