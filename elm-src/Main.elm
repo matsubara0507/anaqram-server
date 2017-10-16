@@ -71,13 +71,16 @@ viewScores model =
                         ]
                     ]
                 , scores
-                    |> List.sortBy .swapCount
-                    |> List.sortBy .clearTime
-                    |> List.sortBy .textLength
-                    |> List.reverse
+                    |> List.sortWith compareScore
                     |> List.indexedMap viewScore
                     |> tbody []
                 ]
+
+compareScore : Score -> Score -> Order
+compareScore a b =
+  compare b.textLength a.textLength
+    |> \x -> if x /= EQ then x else compare a.clearTime b.clearTime
+    |> \x -> if x /= EQ then x else compare b.swapCount a.swapCount
 
 
 viewScore : Int -> API.Score -> Html Msg
