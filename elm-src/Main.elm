@@ -45,7 +45,7 @@ model : Model
 model =
     { scores = NotAsked
     , reload = False
-    , scoreOrds = [TextLength, ClearTime, SwapCount]
+    , scoreOrds = [ TextLength, ClearTime, SwapCount ]
     }
 
 
@@ -117,7 +117,15 @@ viewScores model =
 
 compareScore : List ScoreOrd -> Score -> Score -> Order
 compareScore ords a b =
-    List.foldl (\ord acc -> if acc /= EQ then acc else compareScoreWith ord a b) EQ ords
+    List.foldl
+        (\ord acc ->
+            if acc /= EQ then
+                acc
+            else
+                compareScoreWith ord a b
+        )
+        EQ
+        ords
 
 
 compareScoreWith : ScoreOrd -> Score -> Score -> Order
@@ -125,8 +133,10 @@ compareScoreWith ord a b =
     case ord of
         TextLength ->
             compare b.textLength a.textLength
+
         ClearTime ->
             compare a.clearTime b.clearTime
+
         SwapCount ->
             compare a.swapCount b.swapCount
 
@@ -173,7 +183,12 @@ update msg model =
             )
 
         Click ord ->
-            ( { model | scoreOrds = ord :: List.filter ((/=) ord) model.scoreOrds }, Cmd.none )
+            let
+                newScoreOrds =
+                    ord :: List.filter ((/=) ord) model.scoreOrds
+            in
+            ( { model | scoreOrds = newScoreOrds }, Cmd.none )
+
 
 fetchScores : Cmd Msg
 fetchScores =
