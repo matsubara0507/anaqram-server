@@ -9,7 +9,7 @@ import           Servant.Elm (ElmOptions (..), UrlPrefix (Static),
                               defElmImports, defElmOptions,
                               generateElmForAPIWith)
 import           Shelly      (run_, shelly)
-import           User        (CRUD, User)
+import           Score        (CRUD, Score)
 
 
 elmOpts :: ElmOptions
@@ -18,11 +18,11 @@ elmOpts =
     { urlPrefix = Static "http://localhost:8080" }
 
 spec :: Spec
-spec = Spec ["Generated", "UserAPI"]
+spec = Spec ["Generated", "ScoreAPI"]
             (defElmImports
-             : toElmTypeSource    (Proxy :: Proxy User)
-             : toElmDecoderSource (Proxy :: Proxy User)
-             : toElmEncoderSource (Proxy :: Proxy User)
+             : toElmTypeSource    (Proxy :: Proxy Score)
+             : toElmDecoderSource (Proxy :: Proxy Score)
+             : toElmEncoderSource (Proxy :: Proxy Score)
              : generateElmForAPIWith elmOpts  (Proxy :: Proxy CRUD))
 
 main :: IO ()

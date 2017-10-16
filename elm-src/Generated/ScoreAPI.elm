@@ -1,4 +1,4 @@
-module Generated.UserAPI exposing (..)
+module Generated.ScoreAPI exposing (..)
 
 import Json.Decode exposing (..)
 import Json.Decode.Pipeline exposing (..)
@@ -7,32 +7,29 @@ import Http
 import String
 
 
-type alias User =
-    { name : String
-    , textLength : Int
+type alias Score =
+    { textLength : Int
     , clearTime : Int
     , swapCount : Int
     }
 
-decodeUser : Decoder User
-decodeUser =
-    decode User
-        |> required "name" string
+decodeScore : Decoder Score
+decodeScore =
+    decode Score
         |> required "textLength" int
         |> required "clearTime" int
         |> required "swapCount" int
 
-encodeUser : User -> Json.Encode.Value
-encodeUser x =
+encodeScore : Score -> Json.Encode.Value
+encodeScore x =
     Json.Encode.object
-        [ ( "name", Json.Encode.string x.name )
-        , ( "textLength", Json.Encode.int x.textLength )
+        [ ( "textLength", Json.Encode.int x.textLength )
         , ( "clearTime", Json.Encode.int x.clearTime )
         , ( "swapCount", Json.Encode.int x.swapCount )
         ]
 
-getUsers : Http.Request (List (User))
-getUsers =
+getScores : Http.Request (List (Score))
+getScores =
     Http.request
         { method =
             "GET"
@@ -41,20 +38,20 @@ getUsers =
         , url =
             String.join "/"
                 [ "http://localhost:8080"
-                , "users"
+                , "scores"
                 ]
         , body =
             Http.emptyBody
         , expect =
-            Http.expectJson (list decodeUser)
+            Http.expectJson (list decodeScore)
         , timeout =
             Nothing
         , withCredentials =
             False
         }
 
-postUsers : User -> Http.Request (User)
-postUsers body =
+postScores : Score -> Http.Request (Score)
+postScores body =
     Http.request
         { method =
             "POST"
@@ -63,12 +60,12 @@ postUsers body =
         , url =
             String.join "/"
                 [ "http://localhost:8080"
-                , "users"
+                , "scores"
                 ]
         , body =
-            Http.jsonBody (encodeUser body)
+            Http.jsonBody (encodeScore body)
         , expect =
-            Http.expectJson decodeUser
+            Http.expectJson decodeScore
         , timeout =
             Nothing
         , withCredentials =

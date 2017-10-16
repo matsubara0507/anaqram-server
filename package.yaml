@@ -29,7 +29,7 @@ dependencies:
 library:
   source-dirs: src
   exposed-modules:
-    - User
+    - Score
   other-modules: []
   ghc-options: -fno-warn-orphans
 

@@ -16,41 +16,41 @@ import           Servant.API               ((:<|>) (..), (:>), Get, Raw)
 import           Servant.EDE               (HTML, loadTemplates)
 import           Servant.Server            (Server, serve)
 import           Servant.Utils.StaticFiles (serveDirectoryFileServer)
-import           User                      (User (..))
-import qualified User
+import           Score                      (Score (..))
+import qualified Score
 
 main :: IO ()
 main = do
-  db <- atomically $ newTVar (length initUserList, IntMap.fromList initUserList)
+  db <- atomically $ newTVar (length initScoreList, IntMap.fromList initScoreList)
   _ <- loadTemplates api [] "."
   putStrLn "Listening on port 8080"
   Warp.run 8080 $ serve api (server db)
 
 type API = Get '[HTML "index.html"] Object
          :<|> "static" :> Raw
-         :<|> User.CRUD
+         :<|> Score.CRUD
 
 api :: Proxy API
 api = Proxy
 
-server :: TVar (Int, IntMap User) -> Server API
+server :: TVar (Int, IntMap Score) -> Server API
 server db = index
      :<|> serveDirectoryFileServer "static"
-     :<|> getUsers
-     :<|> postUser
+     :<|> getScores
+     :<|> postScore
   where
     index = pure mempty
-    getUsers = liftIO $ IntMap.elems . snd <$> atomically (readTVar db)
-    postUser user = liftIO . atomically $ do
+    getScores = liftIO $ IntMap.elems . snd <$> atomically (readTVar db)
+    postScore score = liftIO . atomically $ do
       (maxId, m) <- readTVar db
       let
         newId = maxId + 1
-      writeTVar db (newId, IntMap.insert newId user m)
-      pure user
+      writeTVar db (newId, IntMap.insert newId score m)
+      pure score
 
-initUserList :: [(Int, User)]
-initUserList =
-  [ (1, User "Alice" 6 10 4)
-  , (2, User "Bob"   6 12 7)
-  , (3, User "Chris" 8 15 6)
+initScoreList :: [(Int, Score)]
+initScoreList =
+  [ (1, Score 6 10 4)
+  , (2, Score 6 12 7)
+  , (3, Score 8 15 6)
   ]

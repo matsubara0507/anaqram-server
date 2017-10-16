@@ -2,35 +2,33 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TypeOperators #-}
 
-module User
-    ( User (..)
+module Score
+    ( Score (..)
     , CRUD
     , crud
     ) where
 
 import           Data.Aeson                  (FromJSON, ToJSON)
 import           Data.Proxy                  (Proxy (..))
-import           Data.Text                   (Text)
 import           Elm                         (ElmType)
 import           GHC.Generics                (Generic)
 import           Servant.API                 ((:<|>) (..), (:>), FormUrlEncoded,
                                               Get, JSON, Post, ReqBody)
 import           Web.Internal.FormUrlEncoded (FromForm)
 
-data User = User
-  { name       :: Text
-  , textLength :: Int
+data Score = Score
+  { textLength :: Int
   , clearTime  :: Int
   , swapCount  :: Int
   } deriving (Generic, Show)
 
-instance FromJSON User
-instance ToJSON User
-instance FromForm User
-instance ElmType User
+instance FromJSON Score
+instance ToJSON Score
+instance FromForm Score
+instance ElmType Score
 
-type CRUD = "users" :> Get '[JSON] [User]
-       :<|> "users" :> ReqBody '[JSON, FormUrlEncoded] User :> Post '[JSON] User
+type CRUD = "scores" :> Get '[JSON] [Score]
+       :<|> "scores" :> ReqBody '[JSON, FormUrlEncoded] Score :> Post '[JSON] Score
 
 crud :: Proxy CRUD
 crud = Proxy

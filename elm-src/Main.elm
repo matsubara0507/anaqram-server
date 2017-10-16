@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Data.Composition exposing (..)
-import Generated.UserAPI as API exposing (User)
+import Generated.ScoreAPI as API exposing (Score)
 import Html as Html exposing (..)
 import Html.Attributes exposing (class)
 import Http
@@ -19,22 +19,22 @@ main =
 
 
 type alias Model =
-    { users : RemoteData String (List API.User)
+    { scores : RemoteData String (List API.Score)
     }
 
 
 type Msg
-    = FetchUsers (Result Http.Error (List API.User))
+    = FetchScores (Result Http.Error (List API.Score))
 
 
 model : Model
 model =
-    { users = NotAsked }
+    { scores = NotAsked }
 
 
 init : Model -> ( Model, Cmd Msg )
 init model =
-    ( model, fetchUsers )
+    ( model, fetchScores )
 
 
 view : Model -> Html Msg
@@ -42,14 +42,14 @@ view model =
     div [ class "container" ]
         [ div [ class " my-3 mx-auto col-10 col-lg-8" ]
             [ h2 [ class "f1-light" ] [ text "AnaQRam Ranking !!" ]
-            , viewUsers model
+            , viewScores model
             ]
         ]
 
 
-viewUsers : Model -> Html Msg
-viewUsers model =
-    case model.users of
+viewScores : Model -> Html Msg
+viewScores model =
+    case model.scores of
         NotAsked ->
             text "Please Push Button."
 
@@ -59,50 +59,50 @@ viewUsers model =
         Failure err ->
             text ("Error: " ++ toString err)
 
-        Success users ->
+        Success scores ->
             table
                 [ class "col-12 f3" ]
                 [ thead []
                     [ tr []
-                        [ th [ class "text-left" ] [ text "Name" ]
+                        [ th [ class "text-right" ] [ text "Rank" ]
                         , th [ class "text-right" ] [ text "Text Length" ]
                         , th [ class "text-right" ] [ text "Clear Time" ]
                         , th [ class "text-right" ] [ text "Swap Count" ]
                         ]
                     ]
-                , users
+                , scores
                     |> List.sortBy .swapCount
                     |> List.sortBy .clearTime
                     |> List.sortBy .textLength
                     |> List.reverse
-                    |> List.map viewUser
+                    |> List.indexedMap viewScore
                     |> tbody []
                 ]
 
 
-viewUser : API.User -> Html Msg
-viewUser user =
+viewScore : Int -> API.Score -> Html Msg
+viewScore index score =
     tr []
-        [ td [ class "text-left" ] [ text user.name ]
-        , td [ class "text-right" ] [ text $ toString user.textLength ]
-        , td [ class "text-right" ] [ text $ toString user.clearTime ]
-        , td [ class "text-right" ] [ text $ toString user.swapCount ]
+        [ td [ class "text-right" ] [ text $ toString (index + 1) ]
+        , td [ class "text-right" ] [ text $ toString score.textLength ]
+        , td [ class "text-right" ] [ text $ toString score.clearTime ]
+        , td [ class "text-right" ] [ text $ toString score.swapCount ]
         ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        FetchUsers (Ok users) ->
-            ( { model | users = Success users }, Cmd.none )
+        FetchScores (Ok scores) ->
+            ( { model | scores = Success scores }, Cmd.none )
 
-        FetchUsers (Err _) ->
-            ( { model | users = Failure "Something went wrong.." }, Cmd.none )
+        FetchScores (Err _) ->
+            ( { model | scores = Failure "Something went wrong.." }, Cmd.none )
 
 
-fetchUsers : Cmd Msg
-fetchUsers =
-    Http.send FetchUsers API.getUsers
+fetchScores : Cmd Msg
+fetchScores =
+    Http.send FetchScores API.getScores
 
 
 baseUrl : String
