@@ -38,6 +38,7 @@ type Msg
     | CheckReload Bool
     | Reload
     | Tick Time
+    | Click ScoreOrd
 
 
 model : Model
@@ -102,9 +103,9 @@ viewScores model =
                 [ thead []
                     [ tr [ class "border-bottum" ]
                         [ th [ class "text-right p-2" ] [ text "順位" ]
-                        , th [ class "text-right p-2" ] [ text "文字数" ]
-                        , th [ class "text-right p-2" ] [ text "クリアタイム" ]
-                        , th [ class "text-right p-2" ] [ text "入れ替え回数" ]
+                        , th [ class "text-right p-2", onClick $ Click TextLength ] [ text "文字数" ]
+                        , th [ class "text-right p-2", onClick $ Click ClearTime ] [ text "クリアタイム" ]
+                        , th [ class "text-right p-2", onClick $ Click SwapCount ] [ text "入れ替え回数" ]
                         ]
                     ]
                 , scores
@@ -171,6 +172,8 @@ update msg model =
                 Cmd.none
             )
 
+        Click ord ->
+            ( { model | scoreOrds = ord :: List.filter ((/=) ord) model.scoreOrds }, Cmd.none )
 
 fetchScores : Cmd Msg
 fetchScores =
