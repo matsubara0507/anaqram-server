@@ -39,8 +39,8 @@ init model =
 
 view : Model -> Html Msg
 view model =
-    div [ class "container" ]
-        [ div [ class " my-3 mx-auto col-10 col-lg-8" ]
+    div [ class "" ]
+        [ div [ class "my-3 mx-auto col-10 col-lg-8" ]
             [ h2 [ class "f1-light" ] [ text "AnaQRam Ranking !!" ]
             , viewScores model
             ]
