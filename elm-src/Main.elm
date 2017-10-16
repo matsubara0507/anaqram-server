@@ -41,7 +41,7 @@ view : Model -> Html Msg
 view model =
     div [ class "" ]
         [ div [ class "my-3 mx-auto col-10 col-lg-8" ]
-            [ h2 [ class "f1-light" ] [ text "AnaQRam Ranking !!" ]
+            [ h2 [ class "f1-light" ] [ text "AnaQRam ランキング !!" ]
             , viewScores model
             ]
         ]
@@ -64,10 +64,10 @@ viewScores model =
                 [ class "col-12 f3" ]
                 [ thead []
                     [ tr [ class "border-bottum" ]
-                        [ th [ class "text-right p-2" ] [ text "Rank" ]
-                        , th [ class "text-right p-2" ] [ text "Text Length" ]
-                        , th [ class "text-right p-2" ] [ text "Clear Time" ]
-                        , th [ class "text-right p-2" ] [ text "Swap Count" ]
+                        [ th [ class "text-right p-2" ] [ text "順位" ]
+                        , th [ class "text-right p-2" ] [ text "文字数" ]
+                        , th [ class "text-right p-2" ] [ text "クリアタイム" ]
+                        , th [ class "text-right p-2" ] [ text "入れ替え回数" ]
                         ]
                     ]
                 , scores
