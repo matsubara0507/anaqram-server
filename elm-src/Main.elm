@@ -59,7 +59,10 @@ view model =
     div [ class "" ]
         [ div [ class "my-3 mx-auto col-10 col-lg-8" ]
             [ div []
-                [ h2 [ class "f1-light float-left", onClick Reload ]
+                [ h2
+                    [ class "f1-light float-left link-gray-dark"
+                    , onClick Reload
+                    ]
                     [ text "AnaQRam ランキング !!" ]
                 , div [ class "float-right" ] [ viewCheckReload model ]
                 ]
@@ -103,9 +106,18 @@ viewScores model =
                 [ thead []
                     [ tr [ class "border-bottum" ]
                         [ th [ class "text-right p-2" ] [ text "順位" ]
-                        , th [ class "text-right p-2", onClick $ Click TextLength ] [ text "文字数" ]
-                        , th [ class "text-right p-2", onClick $ Click ClearTime ] [ text "クリアタイム" ]
-                        , th [ class "text-right p-2", onClick $ Click SwapCount ] [ text "入れ替え回数" ]
+                        , th [ class "text-right p-2 link-gray-dark"
+                             , onClick $ Click TextLength
+                             ]
+                             [ text "文字数" ]
+                        , th [ class "text-right p-2 link-gray-dark"
+                             , onClick $ Click ClearTime
+                             ]
+                             [ text "クリアタイム" ]
+                        , th [ class "text-right p-2 link-gray-dark"
+                             , onClick $ Click SwapCount
+                             ]
+                             [ text "入れ替え回数" ]
                         ]
                     ]
                 , scores
