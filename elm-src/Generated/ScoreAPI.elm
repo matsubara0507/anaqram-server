@@ -37,7 +37,7 @@ getScores =
             []
         , url =
             String.join "/"
-                [ "http://localhost:8080"
+                [ ""
                 , "scores"
                 ]
         , body =
@@ -59,7 +59,7 @@ postScores body =
             []
         , url =
             String.join "/"
-                [ "http://localhost:8080"
+                [ ""
                 , "scores"
                 ]
         , body =

@@ -1,12 +1,18 @@
-resolver: nightly-2017-10-13
+resolver: lts-9.9
 packages:
   - .
-  - location:
-      git: https://github.com/matsubara0507/Shelly.hs
-      commit: 9b39825d644349a73f688352d41ce06ee8634d18
-    extra-dep: true
 extra-deps:
   - servant-ede-0.6
-  - shelly-1.6.8.4
 flags: {}
 extra-package-dbs: []
+
+image:
+  container:
+    name: "anaqram"
+    base: "fpco/stack-build"
+    add:
+      data: /app
+      script: /usr/local/bin/
+      static: /app/static
+    entrypoints: ["entrypoint.sh"]
+
