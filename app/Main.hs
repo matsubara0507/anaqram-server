@@ -4,6 +4,7 @@
 
 module Main where
 
+import qualified Configuration.Dotenv      as Dotenv
 import           Control.Monad.IO.Class    (liftIO)
 import           Data.Aeson
 import           Data.Proxy                (Proxy (..))
@@ -17,6 +18,7 @@ import           Servant.Utils.StaticFiles (serveDirectoryFileServer)
 
 main :: IO ()
 main = do
+  Dotenv.loadFile False "./config/.env"
   _ <- loadTemplates api [] "."
   putStrLn "Listening on port 8080"
   Warp.run 8080 $ serve api server

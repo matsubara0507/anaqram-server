@@ -25,6 +25,7 @@ library
     , base >= 4.7 && < 5
     , bytestring
     , containers
+    , dotenv
     , elm-export
     , http-api-data
     , monad-logger
@@ -56,6 +57,7 @@ executable server
     , base >= 4.7 && < 5
     , bytestring
     , containers
+    , dotenv
     , elm-export
     , http-api-data
     , monad-logger
@@ -86,6 +88,7 @@ test-suite generate
     , base >= 4.7 && < 5
     , bytestring
     , containers
+    , dotenv
     , elm-export
     , http-api-data
     , monad-logger
