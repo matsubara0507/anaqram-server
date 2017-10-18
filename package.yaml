@@ -13,9 +13,15 @@ ghc-options: -Wall
 dependencies:
   - aeson
   - base >= 4.7 && < 5
+  - bytestring
   - containers
   - elm-export
   - http-api-data
+  - monad-logger
+  - persistent
+  - persistent-postgresql
+  - persistent-template
+  - resourcet
   - servant
   - servant-ede
   - servant-elm
@@ -29,6 +35,7 @@ dependencies:
 library:
   source-dirs: src
   exposed-modules:
+    - DB
     - Score
   other-modules: []
   ghc-options: -fno-warn-orphans

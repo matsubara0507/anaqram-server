@@ -23,9 +23,15 @@ library
   build-depends:
       aeson
     , base >= 4.7 && < 5
+    , bytestring
     , containers
     , elm-export
     , http-api-data
+    , monad-logger
+    , persistent
+    , persistent-postgresql
+    , persistent-template
+    , resourcet
     , servant
     , servant-ede
     , servant-elm
@@ -36,6 +42,7 @@ library
     , unordered-containers
     , warp
   exposed-modules:
+      DB
       Score
   default-language: Haskell2010
 
@@ -47,9 +54,15 @@ executable server
   build-depends:
       aeson
     , base >= 4.7 && < 5
+    , bytestring
     , containers
     , elm-export
     , http-api-data
+    , monad-logger
+    , persistent
+    , persistent-postgresql
+    , persistent-template
+    , resourcet
     , servant
     , servant-ede
     , servant-elm
@@ -71,9 +84,15 @@ test-suite generate
   build-depends:
       aeson
     , base >= 4.7 && < 5
+    , bytestring
     , containers
     , elm-export
     , http-api-data
+    , monad-logger
+    , persistent
+    , persistent-postgresql
+    , persistent-template
+    , resourcet
     , servant
     , servant-ede
     , servant-elm
