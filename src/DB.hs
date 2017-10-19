@@ -41,13 +41,24 @@ toScore (ScoreData a b c) = Score a b c
 fromScore :: Score -> ScoreData
 fromScore (Score a b c) = ScoreData a b c
 
-getConn :: String -> ConnectionString
-getConn pass =  mconcat 
-    [ "host=127.0.0.1", " "
-    , "port=5431", " "
-    , "sslmode=disable", " "
-    , "dbname=postgres", " "
-    , "user=postgres", " "
+getConn :: IO ConnectionString
+getConn = do
+  let 
+    dbName = "POSTGRESQL_"
+    info = [ ("HOST", "127.0.0.1")
+           , ("PORT", "5432")
+           , ("USER", "postgres")
+           , ("PASSWORD", "")
+           , ("DATABASE", "postgres")
+           ]
+  [host, port, user, pass, db] <-
+    mapM (\(k, v) -> fromMaybe v <$> lookupEnv (dbName ++ k)) info
+  return $ mconcat 
+    [ "host="    , fromString host, " "
+    , "port="    , fromString port, " "
+    , "sslmode=" , "disable", " "
+    , "dbname="  , fromString db, " "
+    , "user="    , fromString user, " "
     , "password=", fromString pass
     ]
 
@@ -56,17 +67,17 @@ runDB conn = runNoLoggingT . runResourceT . withPostgresqlConn conn . runSqlConn
 
 doMigration :: IO ()
 doMigration = do
-  conn <- getConn . fromMaybe "postgres" <$> lookupEnv "POSTGRESQL_PASSWORD"
+  conn <- getConn
   runNoLoggingT . runResourceT . withPostgresqlConn conn . runReaderT $ runMigration migrateAll
 
 selectScores :: IO [Score]
 selectScores = do
-    conn <- getConn . fromMaybe "postgres" <$> lookupEnv "POSTGRESQL_PASSWORD"
+    conn <- getConn
     scoreList <- runDB conn  $ selectList [] []
     return $ map (\(Entity _ u) -> toScore u) scoreList
 
 insertScore :: Score -> IO ()
 insertScore score = do
-    conn <- getConn . fromMaybe "postgres" <$> lookupEnv "POSTGRESQL_PASSWORD"
+    conn <- getConn
     runDB conn . insert_ . fromScore $ score
 
