@@ -20,7 +20,7 @@ dependencies:
   - http-api-data
   - monad-logger
   - persistent
-  - persistent-postgresql
+  - persistent-mysql
   - persistent-template
   - resourcet
   - servant

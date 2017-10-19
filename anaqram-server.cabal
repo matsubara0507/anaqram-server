@@ -30,7 +30,7 @@ library
     , http-api-data
     , monad-logger
     , persistent
-    , persistent-postgresql
+    , persistent-mysql
     , persistent-template
     , resourcet
     , servant
@@ -62,7 +62,7 @@ executable server
     , http-api-data
     , monad-logger
     , persistent
-    , persistent-postgresql
+    , persistent-mysql
     , persistent-template
     , resourcet
     , servant
@@ -93,7 +93,7 @@ test-suite generate
     , http-api-data
     , monad-logger
     , persistent
-    , persistent-postgresql
+    , persistent-mysql
     , persistent-template
     , resourcet
     , servant
