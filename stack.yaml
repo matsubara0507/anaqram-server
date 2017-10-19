@@ -11,6 +11,7 @@ image:
     name: "anaqram"
     base: "fpco/stack-build"
     add:
+      config: /app/config
       data: /app
       script: /usr/local/bin/
       static: /app/static
