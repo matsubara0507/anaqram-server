@@ -26,6 +26,7 @@ dependencies:
   - servant
   - servant-ede
   - servant-elm
+  - servant-kotlin
   - servant-server
   - text
   - transformers
@@ -50,9 +51,16 @@ executables:
     other-modules: []
 
 tests:
-  generate:
+  generateElm:
     source-dirs: app
-    main: Generate.hs
+    main: GenerateElm.hs
+    dependencies:
+      - anaqram-server
+      - shelly
+    other-modules: []
+  generateKotlin:
+    source-dirs: app
+    main: GenerateKotlin.hs
     dependencies:
       - anaqram-server
       - shelly
