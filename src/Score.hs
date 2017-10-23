@@ -14,6 +14,7 @@ import           Elm                         (ElmType)
 import           GHC.Generics                (Generic)
 import           Servant.API                 ((:<|>) (..), (:>), FormUrlEncoded,
                                               Get, JSON, Post, ReqBody)
+import           Servant.Kotlin              (KotlinType)
 import           Web.Internal.FormUrlEncoded (FromForm)
 
 data Score = Score
@@ -26,6 +27,7 @@ instance FromJSON Score
 instance ToJSON Score
 instance FromForm Score
 instance ElmType Score
+instance KotlinType Score
 
 type CRUD = "scores" :> Get '[JSON] [Score]
        :<|> "scores" :> ReqBody '[JSON, FormUrlEncoded] Score :> Post '[JSON] Score

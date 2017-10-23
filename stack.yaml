@@ -1,6 +1,10 @@
 resolver: lts-9.9
 packages:
   - .
+  - location:
+      git: https://github.com/matsubara0507/servant-kotlin.git
+      commit: 23e8daf010ea0d74940166d6c242d6020c9128ee
+    extra-dep: true
 extra-deps:
   - servant-ede-0.6
 flags: {}
@@ -16,4 +20,3 @@ image:
       script: /usr/local/bin/
       static: /app/static
     entrypoints: ["entrypoint.sh"]
-
