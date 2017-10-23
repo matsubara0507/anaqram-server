@@ -14,7 +14,8 @@ if use [MySQL](https://www.mysql.com) alt PostgreSQL, refer [`mysql`](https://gi
 - [Persistent](https://hackage.haskell.org/package/persistent): package for database
 - [elm-export](https://hackage.haskell.org/package/elm-export): Generate Elm source code automatically from Haskell types
     - [servant-elm](https://hackage.haskell.org/package/servant-elm): Generate Elm functions to query your Servant API
-    
+- [servant-kotlin](https://github.com/matsubara0507/servant-kotlin): Generate Kotlin source code automatically from Haskell types and Servant API 
+
 and more, refer [package.yaml](https://github.com/matsubara0507/anaqram-server/blob/master/package.yaml).
  
 ## Usage
