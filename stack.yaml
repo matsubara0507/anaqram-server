@@ -1,22 +1,23 @@
-resolver: lts-9.9
+resolver: lts-14.7
 packages:
-  - .
-  - location:
-      git: https://github.com/matsubara0507/servant-kotlin.git
-      commit: 23e8daf010ea0d74940166d6c242d6020c9128ee
-    extra-dep: true
+- .
 extra-deps:
-  - servant-ede-0.6
-flags: {}
-extra-package-dbs: []
+- extensible-0.6
+- membership-0
+- github: matsubara0507/mix.hs
+  commit: c6c303f9ddf4655a42804ee67d512af6d3b14e98
+  subdirs:
+  - mix
+  - mix-json-logger
+- github: matsubara0507/fallible
+  commit: dfbdce1a0b0c71bcfcea844c94f9cb815f071235
+- github: matsubara0507/elmap.hs
+  commit: a1539c3be6e8b5757a2a10a55e7c1b19c1fc76fd
+  subdirs:
+  - elmap
+  - servant-elmap
+  - extensible-elmap
 
-image:
-  container:
-    name: "anaqram"
-    base: "fpco/stack-build"
-    add:
-      config: /app/config
-      data: /app
-      script: /usr/local/bin/
-      static: /app/static
-    entrypoints: ["entrypoint.sh"]
+docker:
+  repo: matsubara0507/stack-build
+  enable: false

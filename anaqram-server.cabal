@@ -1,146 +1,111 @@
--- This file has been generated from package.yaml by hpack version 0.17.1.
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
 --
 -- see: https://github.com/sol/hpack
+--
+-- hash: a9d64e248cc7f555807b880bafc459866bf63664ab68e08ea8ee00ebbc43444a
 
 name:           anaqram-server
 version:        0.1.0.0
 category:       Web
 homepage:       https://github.com/matsubara0507/anaqram-server#readme
 author:         MATSUBARA Nobutada
+maintainer:     MATSUBARA Nobutada
 copyright:      2017 MATSUBARA Nobutada
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
-cabal-version:  >= 1.10
-
 extra-source-files:
     README.md
 
 library
   hs-source-dirs:
       src
-  ghc-options: -Wall -fno-warn-orphans
+  default-extensions: NoImplicitPrelude BlockArguments ConstraintKinds DataKinds FlexibleContexts FlexibleInstances GeneralizedNewtypeDeriving LambdaCase MultiWayIf NumericUnderscores OverloadedLabels OverloadedStrings PolyKinds QuasiQuotes RankNTypes StandaloneDeriving TemplateHaskell TupleSections TypeApplications TypeFamilies TypeOperators TypeSynonymInstances
+  ghc-options: -Wall -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
   build-depends:
-      aeson
-    , base >= 4.7 && < 5
-    , bytestring
-    , containers
-    , dotenv
-    , elm-export
-    , http-api-data
-    , monad-logger
-    , persistent
-    , persistent-postgresql
-    , persistent-template
-    , resourcet
-    , servant
-    , servant-ede
-    , servant-elm
-    , servant-kotlin
+      base >=4.7 && <5
+    , blaze-html
+    , elmap
+    , extensible >=0.4.9
+    , extensible-elmap
+    , fallible
+    , mix
+    , mix-json-logger
+    , random
+    , rio >=0.1.1.0
+    , servant-blaze
+    , servant-elmap
     , servant-server
-    , text
-    , transformers
-    , stm
-    , unordered-containers
     , warp
+    , yaml
   exposed-modules:
+      AnaQRam.API
+      AnaQRam.Cmd
+      AnaQRam.Env
       DB
       Score
+  other-modules:
+      Paths_anaqram_server
   default-language: Haskell2010
 
 executable server
   main-is: Main.hs
+  other-modules:
+      GetOpt
+      Version
+      Paths_anaqram_server
   hs-source-dirs:
       app
-  ghc-options: -Wall
+  default-extensions: NoImplicitPrelude BlockArguments ConstraintKinds DataKinds FlexibleContexts FlexibleInstances GeneralizedNewtypeDeriving LambdaCase MultiWayIf NumericUnderscores OverloadedLabels OverloadedStrings PolyKinds QuasiQuotes RankNTypes StandaloneDeriving TemplateHaskell TupleSections TypeApplications TypeFamilies TypeOperators TypeSynonymInstances
+  ghc-options: -Wall -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
   build-depends:
-      aeson
-    , base >= 4.7 && < 5
-    , bytestring
-    , containers
+      anaqram-server
+    , base >=4.7 && <5
+    , blaze-html
     , dotenv
-    , elm-export
-    , http-api-data
-    , monad-logger
-    , persistent
-    , persistent-postgresql
-    , persistent-template
-    , resourcet
-    , servant
-    , servant-ede
-    , servant-elm
-    , servant-kotlin
+    , elmap
+    , extensible >=0.4.9
+    , extensible-elmap
+    , fallible
+    , githash
+    , mix
+    , mix-json-logger
+    , random
+    , rio >=0.1.1.0
+    , servant-blaze
+    , servant-elmap
     , servant-server
-    , text
-    , transformers
-    , stm
-    , unordered-containers
     , warp
-    , anaqram-server
+    , yaml
   default-language: Haskell2010
 
-test-suite generateElm
+test-suite generate-elm
   type: exitcode-stdio-1.0
   main-is: GenerateElm.hs
+  other-modules:
+      Paths_anaqram_server
   hs-source-dirs:
-      app
-  ghc-options: -Wall
+      test
+  default-extensions: NoImplicitPrelude BlockArguments ConstraintKinds DataKinds FlexibleContexts FlexibleInstances GeneralizedNewtypeDeriving LambdaCase MultiWayIf NumericUnderscores OverloadedLabels OverloadedStrings PolyKinds QuasiQuotes RankNTypes StandaloneDeriving TemplateHaskell TupleSections TypeApplications TypeFamilies TypeOperators TypeSynonymInstances
+  ghc-options: -Wall -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
   build-depends:
-      aeson
-    , base >= 4.7 && < 5
-    , bytestring
-    , containers
-    , dotenv
-    , elm-export
-    , http-api-data
-    , monad-logger
-    , persistent
-    , persistent-postgresql
-    , persistent-template
-    , resourcet
-    , servant
-    , servant-ede
+      anaqram-server
+    , base >=4.7 && <5
+    , blaze-html
+    , elmap
+    , extensible >=0.4.9
+    , extensible-elmap
+    , fallible
+    , mix
+    , mix-json-logger
+    , random
+    , rio >=0.1.1.0
+    , servant-blaze
     , servant-elm
-    , servant-kotlin
+    , servant-elmap
     , servant-server
-    , text
-    , transformers
-    , stm
-    , unordered-containers
     , warp
-    , anaqram-server
-    , shelly
-  default-language: Haskell2010
-
-test-suite generateKotlin
-  type: exitcode-stdio-1.0
-  main-is: GenerateKotlin.hs
-  hs-source-dirs:
-      app
-  ghc-options: -Wall
-  build-depends:
-      aeson
-    , base >= 4.7 && < 5
-    , bytestring
-    , containers
-    , dotenv
-    , elm-export
-    , http-api-data
-    , monad-logger
-    , persistent
-    , persistent-postgresql
-    , persistent-template
-    , resourcet
-    , servant
-    , servant-ede
-    , servant-elm
-    , servant-kotlin
-    , servant-server
-    , text
-    , transformers
-    , stm
-    , unordered-containers
-    , warp
-    , anaqram-server
-    , shelly
+    , yaml
   default-language: Haskell2010

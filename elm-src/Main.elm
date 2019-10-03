@@ -1,19 +1,21 @@
-module Main exposing (..)
+module Main exposing (main)
 
-import Data.Composition exposing (..)
-import Generated.ScoreAPI as API exposing (Score)
+import AnaQRam.Generated.API as API
+import AnaQRam.Puzzle as Puzzle exposing (Piece, Puzzle)
+import AnaQRam.QRCode as QRCode exposing (QRCode)
+import Browser as Browser
+import Dict
 import Html as Html exposing (..)
-import Html.Attributes exposing (checked, class, type_)
-import Html.Events exposing (onCheck, onClick)
+import Html.Attributes exposing (attribute, autoplay, class, height, hidden, id, style, type_, value, width)
+import Html.Events exposing (onClick, onInput)
 import Http
-import RemoteData exposing (RemoteData(..))
-import Time exposing (Time, minute)
+import Json.Decode exposing (Error, errorToString)
 
 
-main : Program Never Model Msg
+main : Program QRCode.Config Model Msg
 main =
-    Html.program
-        { init = init model
+    Browser.element
+        { init = init
         , view = view
         , update = update
         , subscriptions = subscriptions
@@ -21,197 +23,220 @@ main =
 
 
 type alias Model =
-    { scores : RemoteData String (List API.Score)
-    , reload : Bool
-    , scoreOrds : List ScoreOrd
+    { config : QRCode.Config
+    , qrcode : Maybe QRCode
+    , error : String
+    , sizes : List Int
+    , puzzle : Puzzle
+    , click : Maybe Int
     }
 
 
-type ScoreOrd
-    = TextLength
-    | ClearTime
-    | SwapCount
+init : QRCode.Config -> ( Model, Cmd Msg )
+init config =
+    ( Model config Nothing "" [] Puzzle.empty Nothing
+    , API.getApiSizes FetchWordSizes
+    )
 
 
 type Msg
-    = FetchScores (Result Http.Error (List API.Score))
-    | CheckReload Bool
-    | Reload
-    | Tick Time
-    | Click ScoreOrd
-
-
-model : Model
-model =
-    { scores = NotAsked
-    , reload = False
-    , scoreOrds = [ TextLength, ClearTime, SwapCount ]
-    }
-
-
-init : Model -> ( Model, Cmd Msg )
-init model =
-    ( model, fetchScores )
-
-
-view : Model -> Html Msg
-view model =
-    div [ class "" ]
-        [ div [ class "my-3 mx-auto col-10 col-lg-8" ]
-            [ div []
-                [ h2
-                    [ class "f1-light float-left link-gray-dark"
-                    , onClick Reload
-                    ]
-                    [ text "AnaQRam ランキング !!" ]
-                , div [ class "float-right" ] [ viewCheckReload model ]
-                ]
-            , viewScores model
-            ]
-        ]
-
-
-viewCheckReload : Model -> Html Msg
-viewCheckReload model =
-    form []
-        [ div [ class "form-checkbox" ]
-            [ label []
-                [ input
-                    [ type_ "checkbox"
-                    , checked model.reload
-                    , onCheck CheckReload
-                    ]
-                    []
-                , text "Auto Reload"
-                ]
-            ]
-        ]
-
-
-viewScores : Model -> Html Msg
-viewScores model =
-    case model.scores of
-        NotAsked ->
-            text "Please Push Button."
-
-        Loading ->
-            text "Loading..."
-
-        Failure err ->
-            text ("Error: " ++ toString err)
-
-        Success scores ->
-            table
-                [ class "col-12 f3" ]
-                [ thead []
-                    [ tr [ class "border-bottum" ]
-                        [ th [ class "text-right p-2" ] [ text "順位" ]
-                        , th [ class "text-right p-2 link-gray-dark"
-                             , onClick $ Click TextLength
-                             ]
-                             [ text "文字数" ]
-                        , th [ class "text-right p-2 link-gray-dark"
-                             , onClick $ Click ClearTime
-                             ]
-                             [ text "クリアタイム" ]
-                        , th [ class "text-right p-2 link-gray-dark"
-                             , onClick $ Click SwapCount
-                             ]
-                             [ text "入れ替え回数" ]
-                        ]
-                    ]
-                , scores
-                    |> List.sortWith (compareScore model.scoreOrds)
-                    |> List.indexedMap viewScore
-                    |> tbody []
-                ]
-
-
-compareScore : List ScoreOrd -> Score -> Score -> Order
-compareScore ords a b =
-    List.foldl
-        (\ord acc ->
-            if acc /= EQ then
-                acc
-            else
-                compareScoreWith ord a b
-        )
-        EQ
-        ords
-
-
-compareScoreWith : ScoreOrd -> Score -> Score -> Order
-compareScoreWith ord a b =
-    case ord of
-        TextLength ->
-            compare b.textLength a.textLength
-
-        ClearTime ->
-            compare a.clearTime b.clearTime
-
-        SwapCount ->
-            compare a.swapCount b.swapCount
-
-
-viewScore : Int -> API.Score -> Html Msg
-viewScore index score =
-    tr
-        [ class "border-top"
-        , class
-            $ (if index % 2 == 0 then
-                "bg-gray-light"
-               else
-                ""
-              )
-        ]
-        [ td [ class "text-right p-2" ] [ text $ toString (index + 1) ]
-        , td [ class "text-right p-2" ] [ text $ toString score.textLength ]
-        , td [ class "text-right p-2" ] [ text $ toString score.clearTime ]
-        , td [ class "text-right p-2" ] [ text $ toString score.swapCount ]
-        ]
+    = StartGame
+    | FetchWordSizes (Result Http.Error (List Int))
+    | FetchAnswer (Result Http.Error String)
+    | ShufflePuzzle Puzzle
+    | CaptureImage
+    | UpdateQRCode (Result Error (Maybe QRCode))
+    | ChoiceWordSize Int
+    | ClickPiece Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        FetchScores (Ok scores) ->
-            ( { model | scores = Success scores }, Cmd.none )
-
-        FetchScores (Err _) ->
-            ( { model | scores = Failure "Something went wrong.." }, Cmd.none )
-
-        CheckReload reload ->
-            ( { model | reload = reload }, Cmd.none )
-
-        Reload ->
-            ( model, fetchScores )
-
-        Tick _ ->
-            ( model
-            , if model.reload then
-                fetchScores
-              else
-                Cmd.none
+    case ( model.puzzle.start, msg ) of
+        ( False, StartGame ) ->
+            ( { model | puzzle = Puzzle.start model.puzzle }
+            , Cmd.batch
+                [ QRCode.startCamera ()
+                , API.getApiProblem (Puzzle.size model.puzzle) FetchAnswer
+                ]
             )
 
-        Click ord ->
+        ( False, FetchWordSizes (Ok sizes) ) ->
+            ( { model | sizes = sizes }, Cmd.none )
+
+        ( False, FetchWordSizes (Err err) ) ->
+            ( { model | error = "can't fetch problem sizes: " ++ httpErrorToString err }, Cmd.none )
+
+        ( True, FetchAnswer (Ok "") ) ->
+            ( { model | error = "problem not found." }, Cmd.none )
+
+        ( True, FetchAnswer (Ok answer) ) ->
+            ( model, Puzzle.shuffle ShufflePuzzle (Puzzle.init answer model.puzzle) )
+
+        ( True, FetchAnswer (Err err) ) ->
+            ( { model | error = "can't fetch problem: " ++ httpErrorToString err }, Cmd.none )
+
+        ( True, ShufflePuzzle puzzle ) ->
+            ( { model | puzzle = puzzle }, Cmd.none )
+
+        ( True, CaptureImage ) ->
+            ( model, QRCode.captureImage () )
+
+        ( True, UpdateQRCode (Ok Nothing) ) ->
+            ( { model | error = "QR code is not found." }, Cmd.none )
+
+        ( True, UpdateQRCode (Ok (Just qrcode)) ) ->
+            updatePuzzle qrcode model
+
+        ( _, UpdateQRCode (Err message) ) ->
+            ( { model | error = errorToString message }, Cmd.none )
+
+        ( _, ChoiceWordSize 0 ) ->
+            ( model, Cmd.none )
+
+        ( False, ChoiceWordSize wordSize ) ->
+            ( { model | puzzle = Puzzle.dummy wordSize }, Cmd.none )
+
+        ( True, ClickPiece idx ) ->
+            updatePiece idx model
+
+        _ ->
+            ( model, Cmd.none )
+
+
+updatePuzzle : QRCode -> Model -> ( Model, Cmd Msg )
+updatePuzzle qrcode model =
+    case String.toInt qrcode.data of
+        Nothing ->
+            ( { model | qrcode = Just qrcode, error = "" }, Cmd.none )
+
+        Just pIdx ->
             let
-                newScoreOrds =
-                    ord :: List.filter ((/=) ord) model.scoreOrds
+                updated =
+                    Puzzle.display pIdx model.puzzle
             in
-            ( { model | scoreOrds = newScoreOrds }, Cmd.none )
+            ( { model | qrcode = Just qrcode, error = "", puzzle = updated }, Cmd.none )
 
 
-fetchScores : Cmd Msg
-fetchScores =
-    Http.send FetchScores API.getScores
+updatePiece : Int -> Model -> ( Model, Cmd Msg )
+updatePiece idx model =
+    case model.click of
+        Nothing ->
+            ( { model | click = Just idx }, Cmd.none )
+
+        Just oldIdx ->
+            let
+                updated =
+                    Puzzle.swapPiece idx oldIdx model.puzzle
+            in
+            ( { model | click = Nothing, puzzle = updated }, Cmd.none )
 
 
-baseUrl : String
-baseUrl =
-    "localhost:8000"
+view : Model -> Html Msg
+view model =
+    div []
+        [ video
+            [ class "my-2"
+            , id model.config.ids.video
+            , style "background-color" "#000"
+            , autoplay True
+            , attribute "playsinline" ""
+            , width model.config.size.width
+            , height model.config.size.height
+            ]
+            []
+        , p []
+            [ viewSelectMenu model
+            , button
+                [ class "btn mx-1", type_ "button", onClick StartGame ]
+                [ text "Game Start" ]
+            , button
+                [ class "btn mx-1", type_ "button", onClick CaptureImage ]
+                [ text "Decode QR" ]
+            ]
+        , canvas [ id model.config.ids.capture, hidden True ] []
+        , viewPuzzle model
+        , viewResult model
+        ]
+
+
+viewSelectMenu : Model -> Html Msg
+viewSelectMenu model =
+    let
+        viewItem v =
+            option [ value (String.fromInt v) ] [ text (String.fromInt v) ]
+    in
+    select
+        [ class "form-select mx-1"
+        , onInput (ChoiceWordSize << Maybe.withDefault 0 << String.toInt)
+        ]
+        (option [] [ text "Choose Word Size" ] :: List.map viewItem model.sizes)
+
+
+viewResult : Model -> Html Msg
+viewResult model =
+    let
+        scaned =
+            model.qrcode
+                |> Maybe.map .data
+                |> Maybe.andThen String.toInt
+                |> Maybe.andThen (\idx -> Puzzle.getPiece idx model.puzzle)
+
+        attr =
+            class "mx-5 mb-2 text-left"
+    in
+    case ( Puzzle.success model.puzzle, model.error, scaned ) of
+        ( True, _, _ ) ->
+            div [ attr, class "flash" ] [ text "Success!!" ]
+
+        ( _, "", Just piece ) ->
+            div [ attr, class "flash flash-success" ] [ text ("Found Piece: " ++ String.fromChar piece.char) ]
+
+        ( _, "", Nothing ) ->
+            div [] [ text "" ]
+
+        _ ->
+            div [ attr, class "flash flash-error" ] [ text ("Error: " ++ model.error) ]
+
+
+viewPuzzle : Model -> Html Msg
+viewPuzzle model =
+    div [ class "mb-2" ] (Puzzle.map (viewPiece model) model.puzzle)
+
+
+viewPiece : Model -> Int -> Piece -> Html Msg
+viewPiece model viewIdx piece =
+    let
+        clicked =
+            if Just viewIdx == model.click then
+                class "btn btn-danger"
+
+            else
+                class "btn"
+    in
+    button [ class "mx-1", type_ "button", clicked, onClick (ClickPiece viewIdx) ]
+        [ text (Puzzle.pieceToString piece) ]
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
-    Time.every minute Tick
+subscriptions _ =
+    QRCode.updateQRCodeWithDecode UpdateQRCode
+
+
+httpErrorToString : Http.Error -> String
+httpErrorToString error =
+    case error of
+        Http.BadUrl str ->
+            "bad url: " ++ str
+
+        Http.Timeout ->
+            "timeout"
+
+        Http.NetworkError ->
+            "network error"
+
+        Http.BadStatus status ->
+            "bad status: " ++ String.fromInt status
+
+        Http.BadBody str ->
+            "bad body: " ++ str

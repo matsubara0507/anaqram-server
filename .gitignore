@@ -26,3 +26,5 @@ elm-stuff
 static/main.js
 # elm-repl generated files
 repl-temp-*
+
+*.cabal
