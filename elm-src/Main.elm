@@ -10,6 +10,7 @@ import Html.Attributes exposing (attribute, autoplay, class, height, hidden, id,
 import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode exposing (Error, errorToString)
+import Time
 
 
 main : Program QRCode.Config Model Msg
@@ -29,12 +30,14 @@ type alias Model =
     , sizes : List Int
     , puzzle : Puzzle
     , click : Maybe Int
+    , timer : Int
+    , clear : Bool
     }
 
 
 init : QRCode.Config -> ( Model, Cmd Msg )
 init config =
-    ( Model config Nothing "" [] Puzzle.empty Nothing
+    ( Model config Nothing "" [] Puzzle.empty Nothing 0 False
     , API.getApiSizes FetchWordSizes
     )
 
@@ -48,13 +51,18 @@ type Msg
     | UpdateQRCode (Result Error (Maybe QRCode))
     | ChoiceWordSize Int
     | ClickPiece Int
+    | Tick Time.Posix
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( model.puzzle.start, msg ) of
         ( False, StartGame ) ->
-            ( { model | puzzle = Puzzle.start model.puzzle }
+            ( { model
+                | puzzle = Puzzle.start model.puzzle
+                , timer = 0
+                , clear = False
+              }
             , Cmd.batch
                 [ QRCode.startCamera ()
                 , API.getApiProblem (Puzzle.size model.puzzle) FetchAnswer
@@ -100,6 +108,9 @@ update msg model =
         ( True, ClickPiece idx ) ->
             updatePiece idx model
 
+        ( _, Tick _ ) ->
+            ( { model | timer = model.timer + 1 }, Cmd.none )
+
         _ ->
             ( model, Cmd.none )
 
@@ -115,7 +126,14 @@ updatePuzzle qrcode model =
                 updated =
                     Puzzle.display pIdx model.puzzle
             in
-            ( { model | qrcode = Just qrcode, error = "", puzzle = updated }, Cmd.none )
+            ( { model
+                | qrcode = Just qrcode
+                , error = ""
+                , puzzle = updated
+                , clear = updated.start && Puzzle.success updated
+              }
+            , Cmd.none
+            )
 
 
 updatePiece : Int -> Model -> ( Model, Cmd Msg )
@@ -129,13 +147,20 @@ updatePiece idx model =
                 updated =
                     Puzzle.swapPiece idx oldIdx model.puzzle
             in
-            ( { model | click = Nothing, puzzle = updated }, Cmd.none )
+            ( { model
+                | click = Nothing
+                , puzzle = updated
+                , clear = updated.start && Puzzle.success updated
+              }
+            , Cmd.none
+            )
 
 
 view : Model -> Html Msg
 view model =
     div []
-        [ video
+        [ viewTimer model
+        , video
             [ class "my-2"
             , id model.config.ids.video
             , style "background-color" "#000"
@@ -157,6 +182,18 @@ view model =
         , canvas [ id model.config.ids.capture, hidden True ] []
         , viewPuzzle model
         , viewResult model
+        ]
+
+
+viewTimer : Model -> Html msg
+viewTimer model =
+    div [ class "h2 my-1" ]
+        [ String.concat
+            [ String.padLeft 2 '0' <| String.fromInt (model.timer // 60)
+            , ":"
+            , String.padLeft 2 '0' <| String.fromInt (modBy 60 model.timer)
+            ]
+            |> text
         ]
 
 
@@ -219,8 +256,15 @@ viewPiece model viewIdx piece =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    QRCode.updateQRCodeWithDecode UpdateQRCode
+subscriptions model =
+    Sub.batch
+        [ QRCode.updateQRCodeWithDecode UpdateQRCode
+        , if model.puzzle.start && not model.clear then
+            Time.every 1000 Tick
+
+          else
+            Sub.none
+        ]
 
 
 httpErrorToString : Http.Error -> String
