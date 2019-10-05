@@ -32,12 +32,22 @@ type alias Model =
     , click : Maybe Int
     , timer : Int
     , clear : Bool
+    , swap : Int
     }
 
 
 init : QRCode.Config -> ( Model, Cmd Msg )
 init config =
-    ( Model config Nothing "" [] Puzzle.empty Nothing 0 False
+    ( { config = config
+      , qrcode = Nothing
+      , error = ""
+      , sizes = []
+      , puzzle = Puzzle.empty
+      , click = Nothing
+      , timer = 0
+      , clear = False
+      , swap = 0
+      }
     , API.getApiSizes FetchWordSizes
     )
 
@@ -52,6 +62,7 @@ type Msg
     | ChoiceWordSize Int
     | ClickPiece Int
     | Tick Time.Posix
+    | PostScore (Result Http.Error API.Score)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -126,14 +137,7 @@ updatePuzzle qrcode model =
                 updated =
                     Puzzle.display pIdx model.puzzle
             in
-            ( { model
-                | qrcode = Just qrcode
-                , error = ""
-                , puzzle = updated
-                , clear = updated.start && Puzzle.success updated
-              }
-            , Cmd.none
-            )
+            updateWithClear { model | qrcode = Just qrcode, error = "", puzzle = updated }
 
 
 updatePiece : Int -> Model -> ( Model, Cmd Msg )
@@ -147,13 +151,28 @@ updatePiece idx model =
                 updated =
                     Puzzle.swapPiece idx oldIdx model.puzzle
             in
-            ( { model
-                | click = Nothing
-                , puzzle = updated
-                , clear = updated.start && Puzzle.success updated
-              }
-            , Cmd.none
-            )
+            updateWithClear { model | click = Nothing, puzzle = updated, swap = model.swap + 1 }
+
+
+updateWithClear : Model -> ( Model, Cmd Msg )
+updateWithClear model =
+    if model.puzzle.start && Puzzle.success model.puzzle then
+        ( { model | clear = True }, postScore model )
+
+    else
+        ( model, Cmd.none )
+
+
+postScore : Model -> Cmd Msg
+postScore model =
+    let
+        score =
+            { textLength = Puzzle.size model.puzzle
+            , clearTime = model.timer
+            , swapCount = model.swap
+            }
+    in
+    API.postApiScores score PostScore
 
 
 view : Model -> Html Msg

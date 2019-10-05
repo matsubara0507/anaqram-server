@@ -12,7 +12,7 @@ import           Elm.Mapping
 
 type Score = Record
   '[ "textLength" >: Int
-   , "clearTime"  >: Int -- ms
+   , "clearTime"  >: Int -- sec
    , "swapCount"  >: Int
    ]
 
