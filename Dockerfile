@@ -7,5 +7,4 @@ FROM matsubara0507/ubuntu-for-haskell
 ARG local_bin_path
 WORKDIR /work
 COPY ${local_bin_path} /usr/local/bin
-COPY script /usr/local/bin/
 COPY --from=build-elm /work/static /work/static

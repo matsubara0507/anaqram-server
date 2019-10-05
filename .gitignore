@@ -28,3 +28,5 @@ static/main.js
 repl-temp-*
 
 *.cabal
+static/*.js
+!static/index.js
