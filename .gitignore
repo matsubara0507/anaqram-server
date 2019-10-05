@@ -30,3 +30,4 @@ repl-temp-*
 *.cabal
 static/*.js
 !static/index.js
+bin
