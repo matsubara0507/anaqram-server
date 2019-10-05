@@ -1,6 +1,7 @@
 resolver: lts-14.7
 packages:
 - .
+- plugin/mix-plugin-persistent-sqlite
 extra-deps:
 - extensible-0.6
 - membership-0

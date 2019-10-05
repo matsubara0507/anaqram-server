@@ -56,6 +56,11 @@ dependencies:
 - warp
 - servant-blaze
 - blaze-html
+- http-api-data
+- mix-plugin-persistent-sqlite
+- persistent
+- persistent-template
+- persistent-sqlite
 
 library:
   source-dirs: src
@@ -75,4 +80,3 @@ tests:
     source-dirs: test
     dependencies:
     - anaqram-server
-    - servant-elm
