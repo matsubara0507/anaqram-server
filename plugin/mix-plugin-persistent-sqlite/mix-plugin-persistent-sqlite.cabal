@@ -1,0 +1,38 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: e537f0889971280b354389baeccf9120438c46495027ec0cbb8375deba03d40f
+
+name:           mix-plugin-persistent-sqlite
+version:        0.2.0
+author:         MATSUBARA Nobutada
+maintainer:     t12307043@gunma-u.ac.jp
+copyright:      2019 MATSUBARA Nobutada
+license:        MIT
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+library
+  exposed-modules:
+      Mix.Plugin.Persist.Sqlite
+  other-modules:
+      Paths_mix_plugin_persistent_sqlite
+  hs-source-dirs:
+      src
+  default-extensions: NoImplicitPrelude ConstraintKinds FlexibleContexts FlexibleInstances GeneralizedNewtypeDeriving OverloadedStrings PolyKinds RankNTypes StandaloneDeriving TypeFamilies TypeSynonymInstances
+  ghc-options: -Wall -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns -Wredundant-constraints
+  build-depends:
+      base >=4.7 && <5
+    , extensible >=0.6
+    , fast-logger
+    , mix
+    , monad-logger
+    , persistent
+    , persistent-sqlite
+    , rio >=0.1.1.0
+  default-language: Haskell2010

@@ -1,67 +1,83 @@
 name:                anaqram-server
-version:             0.1.0.0
+version:             1.0.0
 homepage:            https://github.com/matsubara0507/anaqram-server#readme
 license:             MIT
 author:              MATSUBARA Nobutada
 copyright:           2017 MATSUBARA Nobutada
 category:            Web
 extra-source-files:
-  - README.md
+- README.md
+- CHANGELOG.md
 
-ghc-options: -Wall
+ghc-options:
+- -Wall
+- -Wcompat
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wredundant-constraints
+
+default-extensions:
+- NoImplicitPrelude
+
+- BlockArguments
+- ConstraintKinds
+- DataKinds
+- FlexibleContexts
+- FlexibleInstances
+- GeneralizedNewtypeDeriving
+- LambdaCase
+- MultiWayIf
+- NumericUnderscores
+- OverloadedLabels
+- OverloadedStrings
+- PolyKinds
+- QuasiQuotes
+- RankNTypes
+- StandaloneDeriving
+- TemplateHaskell
+- TupleSections
+- TypeApplications
+- TypeFamilies
+- TypeOperators
+- TypeSynonymInstances
 
 dependencies:
-  - aeson
-  - base >= 4.7 && < 5
-  - bytestring
-  - containers
-  - dotenv
-  - elm-export
-  - http-api-data
-  - monad-logger
-  - persistent
-  - persistent-postgresql
-  - persistent-template
-  - resourcet
-  - servant
-  - servant-ede
-  - servant-elm
-  - servant-kotlin
-  - servant-server
-  - text
-  - transformers
-  - stm
-  - unordered-containers
-  - warp
+- base >= 4.7 && < 5
+- rio >= 0.1.1.0
+- extensible >= 0.4.9
+- mix
+- mix-json-logger
+- fallible
+- elmap
+- servant-elmap
+- extensible-elmap
+- servant-server
+- yaml
+- random
+- warp
+- servant-blaze
+- blaze-html
+- http-api-data
+- mix-plugin-persistent-sqlite
+- persistent
+- persistent-template
+- persistent-sqlite
 
 library:
   source-dirs: src
-  exposed-modules:
-    - DB
-    - Score
-  other-modules: []
-  ghc-options: -fno-warn-orphans
 
 executables:
   server:
     source-dirs:      app
     main:             Main.hs
     dependencies:
-      - anaqram-server
-    other-modules: []
+    - anaqram-server
+    - githash
+    - dotenv
 
 tests:
-  generateElm:
-    source-dirs: app
+  generate-elm:
     main: GenerateElm.hs
+    source-dirs: test
     dependencies:
-      - anaqram-server
-      - shelly
-    other-modules: []
-  generateKotlin:
-    source-dirs: app
-    main: GenerateKotlin.hs
-    dependencies:
-      - anaqram-server
-      - shelly
-    other-modules: []
+    - anaqram-server

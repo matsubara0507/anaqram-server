@@ -26,3 +26,9 @@ elm-stuff
 static/main.js
 # elm-repl generated files
 repl-temp-*
+
+anaqram-server.cabal
+static/**/*.js
+!static/**/index.js
+bin
+*.sqlite

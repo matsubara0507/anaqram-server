@@ -1,42 +1,48 @@
-{-# LANGUAGE DataKinds         #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeOperators     #-}
-
 module Main where
 
-import qualified Configuration.Dotenv      as Dotenv
-import           Control.Monad.IO.Class    (liftIO)
-import           Data.Aeson
-import           Data.Proxy                (Proxy (..))
-import qualified DB
-import qualified Network.Wai.Handler.Warp  as Warp
-import qualified Score
-import           Servant.API               ((:<|>) (..), (:>), Get, Raw)
-import           Servant.EDE               (HTML, loadTemplates)
-import           Servant.Server            (Server, serve)
-import           Servant.Utils.StaticFiles (serveDirectoryFileServer)
+import           Paths_anaqram_server      (version)
+import           RIO
+
+import qualified AnaQRam
+import           Configuration.Dotenv      (defaultConfig, loadFile)
+import           Data.Extensible
+import           Data.Extensible.GetOpt
+import           GetOpt                    (withGetOpt')
+import           Mix
+import           Mix.Plugin.Logger         as MixLogger
+import qualified Mix.Plugin.Persist.Sqlite as MixDB
+import qualified Version
 
 main :: IO ()
-main = do
-  Dotenv.loadFile False "./config/.env"
-  _ <- loadTemplates api [] "."
-  putStrLn "Listening on port 8080"
-  Warp.run 8080 $ serve api server
-
-type API = Get '[HTML "index.html"] Object
-         :<|> "static" :> Raw
-         :<|> Score.CRUD
-
-api :: Proxy API
-api = Proxy
-
-server :: Server API
-server = index
-    :<|> serveDirectoryFileServer "static"
-    :<|> getScores
-    :<|> postScore
+main = withGetOpt' "[options] [input-file]" opts $ \r args usage -> do
+  _ <- tryIO $ loadFile defaultConfig
+  if | r ^. #help    -> hPutBuilder stdout (fromString usage)
+     | r ^. #version -> hPutBuilder stdout (Version.build version <> "\n")
+     | otherwise     -> runCmd r (fromMaybe defaultPath $ listToMaybe args)
   where
-    index = pure mempty
-    getScores = liftIO DB.selectScores
-    postScore score = liftIO $ DB.insertScore score >> pure score
+    defaultPath = "./.anaqram-server.yaml"
+    opts = #help    @= optFlag ['h'] ["help"] "Show this help text"
+        <: #version @= optFlag [] ["version"] "Show version"
+        <: #verbose @= optFlag ['v'] ["verbose"] "Enable verbose mode: verbosity level \"debug\""
+        <: #migrate @= optFlag [] ["migrate"] "Migrate SQLite"
+        <: nil
 
+type Options = Record
+  '[ "help"    >: Bool
+   , "version" >: Bool
+   , "verbose" >: Bool
+   , "migrate" >: Bool
+   ]
+
+runCmd :: Options -> FilePath -> IO ()
+runCmd opts path = do
+  config <- AnaQRam.readConfig path
+  let plugin = hsequence
+             $ #logger <@=> MixLogger.buildPlugin logOpts
+            <: #config <@=> pure config
+            <: #sqlite <@=> MixDB.buildPlugin "anaqram.sqlite" 2
+            <: nil
+  if | opts ^. #migrate -> Mix.run plugin AnaQRam.migrate
+     | otherwise        -> Mix.run plugin AnaQRam.app
+  where
+    logOpts = #handle @= stdout <: #verbose @= (opts ^. #verbose) <: nil
