@@ -1,0 +1,35 @@
+sudo: required
+services:
+  - docker
+language: elm
+cache:
+  timeout: 1000
+  directories:
+  - $HOME/.local/bin
+  - $HOME/.stack
+  - $TRAVIS_BUILD_DIR/.stack-work
+install:
+- mkdir -p ~/.local/bin
+- export PATH=$HOME/.local/bin:$PATH
+- travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+jobs:
+  include:
+    - stage: build dependencies
+      script:
+      - stack --no-terminal --docker --install-ghc build -j 1 Cabal
+      - stack --no-terminal --docker --install-ghc test --only-dependencies
+    - stage: run test
+      script:
+      - stack --no-terminal --docker test --no-run-benchmarks --no-haddock-deps --pedantic
+    - stage: push docker image
+      if: branch = master AND type = push
+      script:
+      - make image tag=matsubara0507/anaqram
+      - echo "$DOCKER_PASSWORD" | docker login -u matsubara0507 --password-stdin
+      - docker push matsubara0507/anaqram
+    - stage: push docker image with tag
+      if: tag IS present
+      script:
+      - make image tag=matsubara0507/anaqram:$TRAVIS_TAG
+      - echo "$DOCKER_PASSWORD" | docker login -u matsubara0507 --password-stdin
+      - docker push matsubara0507/anaqram:$TRAVIS_TAG
