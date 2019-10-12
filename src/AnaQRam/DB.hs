@@ -2,6 +2,7 @@
 {-# LANGUAGE MultiParamTypeClasses     #-}
 {-# LANGUAGE QuasiQuotes               #-}
 {-# LANGUAGE TemplateHaskell           #-}
+{-# OPTIONS_GHC -fno-warn-unused-top-binds #-}
 
 module AnaQRam.DB
     ( migrateAll
