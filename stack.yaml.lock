@@ -19,37 +19,69 @@ packages:
   original:
     hackage: membership-0
 - completed:
-    size: 8235
+    size: 9923
     subdir: mix
-    url: https://github.com/matsubara0507/mix.hs/archive/c6c303f9ddf4655a42804ee67d512af6d3b14e98.tar.gz
+    url: https://github.com/matsubara0507/mix.hs/archive/90e9f0ff462aba2e78498e57fad1f8bec1e68260.tar.gz
     cabal-file:
       size: 1110
       sha256: 946df4a87070784d7ea659f6a3ad2f346f8cf31fea1135fc342feb5a303fa147
     name: mix
     version: 0.1.1
-    sha256: ca6fa0fa725f34c7d70943fe21fa71164d58e226c9ef1d52a7b344232c748d24
+    sha256: cd6185a8f8ff1d8b5abaa2eb6c644070c45e366e9dff42ba69578e55edd6f569
     pantry-tree:
       size: 598
       sha256: 689bed307dc233a6c50e01f00295a079dc40a4291700646f3ca423d714ba35fc
   original:
     subdir: mix
-    url: https://github.com/matsubara0507/mix.hs/archive/c6c303f9ddf4655a42804ee67d512af6d3b14e98.tar.gz
+    url: https://github.com/matsubara0507/mix.hs/archive/90e9f0ff462aba2e78498e57fad1f8bec1e68260.tar.gz
 - completed:
-    size: 8235
+    size: 9923
     subdir: mix-json-logger
-    url: https://github.com/matsubara0507/mix.hs/archive/c6c303f9ddf4655a42804ee67d512af6d3b14e98.tar.gz
+    url: https://github.com/matsubara0507/mix.hs/archive/90e9f0ff462aba2e78498e57fad1f8bec1e68260.tar.gz
     cabal-file:
       size: 1086
       sha256: 4843982f1708e474ad68a9bddc213b5447fb285a71b8c8f720329768056b231b
     name: mix-json-logger
     version: 0.1.0
-    sha256: ca6fa0fa725f34c7d70943fe21fa71164d58e226c9ef1d52a7b344232c748d24
+    sha256: cd6185a8f8ff1d8b5abaa2eb6c644070c45e366e9dff42ba69578e55edd6f569
     pantry-tree:
       size: 334
       sha256: 372be4778ce622e4ed87a5c77b4aa547a12da67c01570f2927f7a82ad9ec509d
   original:
     subdir: mix-json-logger
-    url: https://github.com/matsubara0507/mix.hs/archive/c6c303f9ddf4655a42804ee67d512af6d3b14e98.tar.gz
+    url: https://github.com/matsubara0507/mix.hs/archive/90e9f0ff462aba2e78498e57fad1f8bec1e68260.tar.gz
+- completed:
+    size: 9923
+    subdir: mix-plugin-persistent-sqlite
+    url: https://github.com/matsubara0507/mix.hs/archive/90e9f0ff462aba2e78498e57fad1f8bec1e68260.tar.gz
+    cabal-file:
+      size: 1141
+      sha256: bca25f7134c2749a97405a4c4055f6b2faf2ca0869ee02561a6f218aa886098f
+    name: mix-plugin-persistent-sqlite
+    version: 0.1.0
+    sha256: cd6185a8f8ff1d8b5abaa2eb6c644070c45e366e9dff42ba69578e55edd6f569
+    pantry-tree:
+      size: 302
+      sha256: 6dedbed0c4e256eb69874bf5122db9b22d2feb508bbb09d6c959f654ad364a85
+  original:
+    subdir: mix-plugin-persistent-sqlite
+    url: https://github.com/matsubara0507/mix.hs/archive/90e9f0ff462aba2e78498e57fad1f8bec1e68260.tar.gz
+- completed:
+    size: 9923
+    subdir: helper/rio-logger-ext
+    url: https://github.com/matsubara0507/mix.hs/archive/90e9f0ff462aba2e78498e57fad1f8bec1e68260.tar.gz
+    cabal-file:
+      size: 874
+      sha256: 57dc5e8fac453f174d21dc78d9a978381e7789a2c3da871228874ee4bd08c39f
+    name: rio-logger-ext
+    version: 0.1.0
+    sha256: cd6185a8f8ff1d8b5abaa2eb6c644070c45e366e9dff42ba69578e55edd6f569
+    pantry-tree:
+      size: 275
+      sha256: b09bdf4cde70e8147813754e3e4e916002071ed95e22358d904da626d6d16c37
+  original:
+    subdir: helper/rio-logger-ext
+    url: https://github.com/matsubara0507/mix.hs/archive/90e9f0ff462aba2e78498e57fad1f8bec1e68260.tar.gz
 - completed:
     size: 5203
     url: https://github.com/matsubara0507/fallible/archive/dfbdce1a0b0c71bcfcea844c94f9cb815f071235.tar.gz

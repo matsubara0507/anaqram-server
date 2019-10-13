@@ -2,6 +2,8 @@
 
 ## Unreleased changes
 
+- Refactor: replace plugin (#8)
+
 ## 1.0.0
 
 - Remake AnaQRam as Web Apps
