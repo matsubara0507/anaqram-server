@@ -1,3 +1,7 @@
+paths:
+  static: ./static
+  sqlite: ./var/anaqram.sqlite
+
 problems:
 - "りんご"
 - "ゴリラ"

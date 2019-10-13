@@ -14,10 +14,12 @@ app :: RIO Env ()
 app = do
   MixLogger.logInfo "Please accsess to localhost:8080"
   unlift <- askUnliftIO
-  liftIO $ Warp.run 8080 (appWith unlift)
+  staticPath <- asks (view #static . view #paths .view #config)
+  liftIO $ Warp.run 8080 (appWith unlift staticPath)
 
-appWith :: UnliftIO (RIO Env) -> Application
-appWith m = serve api $ hoistServer api (liftIO . unliftIO m) server
+appWith :: UnliftIO (RIO Env) -> FilePath -> Application
+appWith m staticPath =
+  serve api $ hoistServer api (liftIO . unliftIO m) (server staticPath)
 
 migrate :: RIO Env ()
 migrate = do

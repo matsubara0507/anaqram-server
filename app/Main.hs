@@ -40,7 +40,7 @@ runCmd opts path = do
   let plugin = hsequence
              $ #logger <@=> MixLogger.buildPlugin logOpts
             <: #config <@=> pure config
-            <: #sqlite <@=> MixDB.buildPlugin "anaqram.sqlite" 2
+            <: #sqlite <@=> MixDB.buildPlugin (fromString $ config ^. #paths ^. #sqlite) 2
             <: nil
   if | opts ^. #migrate -> Mix.run plugin AnaQRam.migrate
      | otherwise        -> Mix.run plugin AnaQRam.app

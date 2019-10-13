@@ -38,10 +38,10 @@ type CRUD
 api :: Proxy API
 api = Proxy
 
-server :: ServerT API (RIO Env)
-server = indexHtml
+server :: FilePath -> ServerT API (RIO Env)
+server staticPath = indexHtml
     :<|> scoreboardHtml
-    :<|> serveDirectoryFileServer "static"
+    :<|> serveDirectoryFileServer staticPath
     :<|> getSizes
     :<|> getProblem
     :<|> getScores

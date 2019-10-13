@@ -17,7 +17,13 @@ type Env = Record
    ]
 
 type Config = Record
-  '[ "problems" >: [Text]
+  '[ "paths"    >: PathsConfig
+   , "problems" >: [Text]
+   ]
+
+type PathsConfig = Record
+  '[ "static" >: FilePath
+   , "sqlite" >: FilePath
    ]
 
 readConfig :: MonadIO m => FilePath -> m Config
