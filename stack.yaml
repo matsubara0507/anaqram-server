@@ -1,15 +1,16 @@
 resolver: lts-14.7
 packages:
 - .
-- plugin/mix-plugin-persistent-sqlite
 extra-deps:
 - extensible-0.6
 - membership-0
 - github: matsubara0507/mix.hs
-  commit: c6c303f9ddf4655a42804ee67d512af6d3b14e98
+  commit: 90e9f0ff462aba2e78498e57fad1f8bec1e68260
   subdirs:
   - mix
   - mix-json-logger
+  - mix-plugin-persistent-sqlite
+  - helper/rio-logger-ext
 - github: matsubara0507/fallible
   commit: dfbdce1a0b0c71bcfcea844c94f9cb815f071235
 - github: matsubara0507/elmap.hs

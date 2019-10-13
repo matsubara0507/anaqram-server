@@ -1,1 +1,0 @@
-# mix-plugin-persistent-sqlite
