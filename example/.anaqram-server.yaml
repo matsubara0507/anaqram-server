@@ -1,3 +1,5 @@
+sqlite_path: ./var/anaqram.sqlite
+
 problems:
 - "りんご"
 - "ゴリラ"

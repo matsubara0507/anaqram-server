@@ -7,6 +7,7 @@ import qualified AnaQRam
 import           Configuration.Dotenv      (defaultConfig, loadFile)
 import           Data.Extensible
 import           Data.Extensible.GetOpt
+import           Data.Fallible
 import           GetOpt                    (withGetOpt')
 import           Mix
 import           Mix.Plugin.Logger         as MixLogger
@@ -35,14 +36,15 @@ type Options = Record
    ]
 
 runCmd :: Options -> FilePath -> IO ()
-runCmd opts path = do
-  config <- AnaQRam.readConfig path
+runCmd opts path = evalContT $ do
+  config <- AnaQRam.readConfig path !?= exit . displayErr
   let plugin = hsequence
              $ #logger <@=> MixLogger.buildPlugin logOpts
             <: #config <@=> pure config
-            <: #sqlite <@=> MixDB.buildPlugin "anaqram.sqlite" 2
+            <: #sqlite <@=> MixDB.buildPlugin (fromString $ config ^. #sqlite_path) 2
             <: nil
-  if | opts ^. #migrate -> Mix.run plugin AnaQRam.migrate
-     | otherwise        -> Mix.run plugin AnaQRam.app
+  if | opts ^. #migrate -> lift (Mix.run plugin AnaQRam.migrate)
+     | otherwise        -> lift (Mix.run plugin AnaQRam.app)
   where
     logOpts = #handle @= stdout <: #verbose @= (opts ^. #verbose) <: nil
+    displayErr err = hPutBuilder stderr $ "cannot read config: " <> fromString (show err)

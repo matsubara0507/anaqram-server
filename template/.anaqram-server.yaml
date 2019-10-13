@@ -1,0 +1,4 @@
+static_path: ./static
+sqlite_path: ./anaqram.sqlite
+
+problems: []
