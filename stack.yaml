@@ -2,7 +2,7 @@ resolver: lts-14.7
 packages:
 - .
 extra-deps:
-- extensible-0.6
+- extensible-0.6.1
 - membership-0
 - github: matsubara0507/mix.hs
   commit: 90e9f0ff462aba2e78498e57fad1f8bec1e68260

@@ -1,6 +1,4 @@
-paths:
-  static: ./static
-  sqlite: ./var/anaqram.sqlite
+sqlite_path: ./var/anaqram.sqlite
 
 problems:
 - "りんご"
